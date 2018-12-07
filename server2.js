@@ -8,10 +8,23 @@ const PORT=process.env.PORT||3000
 app.use(cors())
 
 app.get(('/location'),(req,res)=>{
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${req.query.address}&key=${process.env.GOOGLE_API_KEY}`
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${req.query.address}&key=${process.env.API_KEY}`
   superagent(url) 
     .then(result=>{
-      res.send(new Location(result))
+      console.log("hello"+address)
+      res.send(new Location(url.result))
+    })
+    .catch(err => res.send('Got an error'))
+})
+
+app.get('/locationn', (req, res) => {
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=${process.env.API_KEY}`
+  superagent.get(url)
+    .then(result => {
+      res.send({
+        longitude: result.body.results[0].geometry.location.lng,
+        latitude: result.body.results[0].geometry.location.lat
+      })
     })
     .catch(err => res.send('Got an error'))
 })
