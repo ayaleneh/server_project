@@ -35,12 +35,19 @@ app.get('/yelp',(req,res)=>{
       res.send(new Yelp(result))
     })
 })
-app.get('temp',(req,res)=>{
-  const url=`https://api.darksky.net/forecast/${process.env.TEMP}/${req.query.latitude},${req.query.longitude}`
+app.get('/weather',(req,res)=>{
+  const url=`https://api.darksky.net/forecast/${process.env.DARK_SKY_API}/${req.query.latitude},${req.query.longitude}`
   superagent.get(url)
     .then(result=>{
-      res.send(result.body)
-      //res.send(new temp(result))
+      //res.send(result.body)
+      res.send(new temp(result))
+    })
+})
+app.get('/movies',(req,res)=>{
+  const url=`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API}&query=${req.query.query}`
+  superagent.get(url)
+    .then(result=>{
+      res.send( new Movies(result))
     })
 })
 app.get('/',(req,res)=>{
@@ -60,16 +67,28 @@ const Location =function(result){
   this.longitude=result.body.results[0].geometry.location.lng
 }
 const temp=function(result){
-  this.time=result.body.time
-  this.summary=result.body.summary
+  this.latitude=result.body.latitude
+  this.time = result.body.currently.time
+  this.summary = result.body.currently.summary
+  this.icon = result.body.currently.icon
+  this.temp = result.body.currently.temperature
 }
 const Yelp=function(result){
   for(let i=0;i<3;i++){
-  this. name=result.body.businesses[i].name
-  this.image_url=result.body.businesses[i].image_url
-  this.rating=result.body.businesses[i].rating
-  this.url=result.body.businesses[i].url
+    this. name=result.body.businesses[i].name
+    this.image_url=result.body.businesses[i].image_url
+    this.rating=result.body.businesses[i].rating
+    this.url=result.body.businesses[i].url
   }
+}
+const Movies=function(result){
+  this.title=result.body.results[0].title,
+  this.overview=result.body.results[0].overview,
+  this.average_vote=result.body.results[0].vote_average,
+  this.total_vote=result.body.results[0].vote_count,
+  this.image_url=result.body.results[0].homepage,
+  this.popularity=result.body.results[0].popularity,
+  this.released_on=result.body.results[0].release_date
 }
 
 
