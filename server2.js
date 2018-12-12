@@ -11,8 +11,8 @@ app.get(('/location'),(req,res)=>{
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${req.query.address}&key=${process.env.API_KEY}`
   superagent(url) 
     .then(result=>{
-      console.log("hello"+address)
-      res.send(new Location(url.result))
+      console.log(result)
+      res.send(new Location(result))
     })
     .catch(err => res.send('Got an error'))
 })
@@ -28,7 +28,21 @@ app.get('/locationn', (req, res) => {
     })
     .catch(err => res.send('Got an error'))
 })
-
+app.get('/yelp',(req,res)=>{
+  const url=`https://api.yelp.com/v3/businesses/search?latitude=${req.query.latitude}&longitude=${req.query.longitude}`
+  superagent.get(url).set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+    .then(result=>{
+      res.send(new Yelp(result))
+    })
+})
+app.get('temp',(req,res)=>{
+  const url=`https://api.darksky.net/forecast/${process.env.TEMP}/${req.query.latitude},${req.query.longitude}`
+  superagent.get(url)
+    .then(result=>{
+      res.send(result.body)
+      //res.send(new temp(result))
+    })
+})
 app.get('/',(req,res)=>{
   res.send("<h1>home page right here</h1>")
 })
@@ -45,9 +59,18 @@ const Location =function(result){
   this.latitude=result.body.results[0].geometry.location.lat
   this.longitude=result.body.results[0].geometry.location.lng
 }
-
-
-
+const temp=function(result){
+  this.time=result.body.time
+  this.summary=result.body.summary
+}
+const Yelp=function(result){
+  for(let i=0;i<3;i++){
+  this. name=result.body.businesses[i].name
+  this.image_url=result.body.businesses[i].image_url
+  this.rating=result.body.businesses[i].rating
+  this.url=result.body.businesses[i].url
+  }
+}
 
 
 
