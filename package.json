@@ -25,6 +25,8 @@
     "nodeman": "^1.1.2",
     "nodemon": "^1.18.7",
     "superagent": "^4.0.0",
-    "yelp": "^1.0.2"
+    "themoviedb": "^0.1.0",
+    "yelp": "^1.0.2",
+    "yelp-fusion": "^2.2.1"
   }
 }
